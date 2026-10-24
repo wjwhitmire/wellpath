@@ -1,0 +1,31 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "wellpath"
+version = "1.0.0"
+description = "Directional survey calculator: minimum curvature TVD, N/E, vertical section, DLS, build and turn."
+readme = "README.md"
+license = { text = "MIT" }
+authors = [{ name = "Will Whitmire" }]
+requires-python = ">=3.10"
+dependencies = []
+keywords = ["drilling", "directional survey", "minimum curvature", "dogleg severity", "well path"]
+classifiers = [
+  "License :: OSI Approved :: MIT License",
+  "Programming Language :: Python :: 3",
+  "Topic :: Scientific/Engineering",
+]
+
+[project.optional-dependencies]
+dev = ["pytest"]
+
+[project.scripts]
+wellpath = "wellpath.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

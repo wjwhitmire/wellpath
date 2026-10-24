@@ -1,0 +1,1118 @@
+<title>Wellpath</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Stencil:wght@700;800&family=Atkinson+Hyperlegible+Next:wght@400;600&family=Atkinson+Hyperlegible+Mono:wght@400;600&display=swap">
+<style>
+/* Field Tools design system v3, 01 Wellpath: "Computation pad, chart recorder inks". */
+:root {
+  --bg: #e3edda; --surface: #f4f8ef; --surface-2: #e2ecd9; --line: #6c8a73;
+  --fg: #1c2420; --muted: #45534a; --accent: #1f4e9e; --accent-ink: #ffffff;
+  --mark: #c0283c;
+  --good: #1b6232; --warn: #8a4f00; --bad: #a3161c;
+  --hair: #c3d6bd; --grid: #cfdfc7; --grid-major: #b3cdac; --rule: #2c6644; --field: #fbfdf8;
+  --chart-1: #1f4e9e; --chart-2: #c0283c; --chart-3: #1c2420; --chart-4: #2c6644; --chart-grid: #b5ccb0;
+  --ink-business: #7a4510; --ink-business-on: #ffffff; --ink-markets: #5b2e8f; --ink-markets-on: #ffffff;
+  --display: "Big Shoulders Stencil", "Bahnschrift Condensed", "DIN Condensed", "Arial Narrow", "Liberation Sans Narrow", "Nimbus Sans Narrow", "DejaVu Sans Condensed", sans-serif;
+  --body: "Atkinson Hyperlegible Next", "Atkinson Hyperlegible", Verdana, "DejaVu Sans", system-ui, sans-serif;
+  --mono: "Atkinson Hyperlegible Mono", ui-monospace, "Cascadia Mono", "SFMono-Regular", Menlo, Consolas, "DejaVu Sans Mono", monospace;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --bg: #0d1412; --surface: #131c19; --surface-2: #1a2622; --line: #5f7d69;
+  --fg: #e3ebe1; --muted: #a0b3a6; --accent: #8db3ff; --accent-ink: #0a1530;
+  --mark: #ff6f86; --good: #6fcf8e; --warn: #e9b35a; --bad: #ff9479;
+  --hair: #283731; --grid: #17241f; --grid-major: #213830; --rule: #8cc29e; --field: #0f1815;
+  --chart-1: #8db3ff; --chart-2: #ff6f86; --chart-3: #e3ebe1; --chart-4: #8cc29e; --chart-grid: #2c3d36;
+  --ink-business: #e3a866; --ink-business-on: #1d1206; --ink-markets: #c4a2ff; --ink-markets-on: #160a2c;
+  --display: "Big Shoulders Stencil", "Bahnschrift Condensed", "DIN Condensed", "Arial Narrow", "Liberation Sans Narrow", "Nimbus Sans Narrow", "DejaVu Sans Condensed", sans-serif;
+  --body: "Atkinson Hyperlegible Next", "Atkinson Hyperlegible", Verdana, "DejaVu Sans", system-ui, sans-serif;
+  --mono: "Atkinson Hyperlegible Mono", ui-monospace, "Cascadia Mono", "SFMono-Regular", Menlo, Consolas, "DejaVu Sans Mono", monospace;
+  color-scheme: dark; } }
+:root[data-theme="dark"] {
+  --bg: #0d1412; --surface: #131c19; --surface-2: #1a2622; --line: #5f7d69;
+  --fg: #e3ebe1; --muted: #a0b3a6; --accent: #8db3ff; --accent-ink: #0a1530;
+  --mark: #ff6f86; --good: #6fcf8e; --warn: #e9b35a; --bad: #ff9479;
+  --hair: #283731; --grid: #17241f; --grid-major: #213830; --rule: #8cc29e; --field: #0f1815;
+  --chart-1: #8db3ff; --chart-2: #ff6f86; --chart-3: #e3ebe1; --chart-4: #8cc29e; --chart-grid: #2c3d36;
+  --ink-business: #e3a866; --ink-business-on: #1d1206; --ink-markets: #c4a2ff; --ink-markets-on: #160a2c;
+  --display: "Big Shoulders Stencil", "Bahnschrift Condensed", "DIN Condensed", "Arial Narrow", "Liberation Sans Narrow", "Nimbus Sans Narrow", "DejaVu Sans Condensed", sans-serif;
+  --body: "Atkinson Hyperlegible Next", "Atkinson Hyperlegible", Verdana, "DejaVu Sans", system-ui, sans-serif;
+  --mono: "Atkinson Hyperlegible Mono", ui-monospace, "Cascadia Mono", "SFMono-Regular", Menlo, Consolas, "DejaVu Sans Mono", monospace;
+  color-scheme: dark; }
+/* Category inks: one line each, set data-cat on .wrap. Drilling is the default blue ink. */
+.wrap[data-cat="business"] { --accent: var(--ink-business); --accent-ink: var(--ink-business-on); --chart-1: var(--ink-business); }
+.wrap[data-cat="markets"] { --accent: var(--ink-markets); --accent-ink: var(--ink-markets-on); --chart-1: var(--ink-markets); }
+
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+html { -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0; color: var(--fg); font-family: var(--body); font-size: 16px; line-height: 1.5;
+  background-color: var(--bg);
+  background-image:
+    linear-gradient(var(--grid-major) 1px, transparent 1px),
+    linear-gradient(90deg, var(--grid-major) 1px, transparent 1px),
+    linear-gradient(var(--grid) 1px, transparent 1px),
+    linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+  background-size: 100px 100px, 100px 100px, 20px 20px, 20px 20px;
+}
+.wrap {
+  max-width: 1120px; margin: 0 auto;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  padding-block: 16px 40px;
+}
+
+/* Signature: the pad's title block. Every tool carries its sheet number. */
+.sheet-head { margin-bottom: 18px; }
+.tb {
+  display: grid; grid-template-columns: repeat(4, minmax(0, auto)); justify-content: start;
+  border: 1px solid var(--rule); background: var(--surface); margin: 0 0 14px;
+}
+.tb > div { padding: 5px 12px 6px; border-left: 1px solid var(--rule); min-width: 0; }
+.tb > div:first-child { border-left: 0; }
+.tb dt { font-family: var(--mono); font-size: 11px; letter-spacing: .12em; text-transform: uppercase; color: var(--rule); margin: 0; }
+.tb dd { margin: 0; font-family: var(--mono); font-size: 13.5px; color: var(--fg); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-variant-numeric: tabular-nums; }
+.tb .no dd { font-weight: 600; }
+@media (max-width: 560px) {
+  .tb { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
+  .tb > div:nth-child(odd) { border-left: 0; }
+  .tb > div:nth-child(n+3) { border-top: 1px solid var(--rule); }
+}
+h1 {
+  font-family: var(--display); font-weight: 800; font-stretch: condensed; font-size: clamp(2.6rem, 9vw, 3.6rem);
+  line-height: .9; letter-spacing: .01em; text-transform: uppercase; margin: 0 0 8px; color: var(--fg);
+}
+.lede { margin: 0; color: var(--muted); max-width: 64ch; }
+h2, h3, summary { font-family: var(--display); font-weight: 700; font-stretch: condensed; text-transform: uppercase; letter-spacing: .03em; line-height: 1.05; }
+h2 { font-size: 1.5rem; margin: 0 0 12px; }
+h3 { font-size: 1.2rem; margin: 0 0 8px; }
+
+/* Panels are sheets laid on the pad. */
+.panel { background: var(--surface); border: 1px solid var(--hair); border-radius: 2px; padding: 16px; margin-bottom: 16px; min-width: 0; }
+@media (min-width: 700px) { .panel { padding: 20px; } }
+
+/* Fields */
+.field { display: flex; flex-direction: column; gap: 5px; min-width: 0; }
+.field label, .lbl, legend { font-size: 14.5px; font-weight: 600; color: var(--fg); }
+.hint { font-size: 14px; color: var(--muted); margin: 0; }
+textarea, input[type="number"], input[type="text"], input[type="date"], select {
+  font: inherit; font-size: 16px; color: var(--fg); background: var(--field);
+  border: 1px solid var(--line); border-radius: 2px; padding: 9px 10px; min-height: 44px; min-width: 0; width: 100%;
+}
+input[type="number"], input[type="text"] { font-family: var(--mono); font-variant-numeric: tabular-nums; }
+textarea { font-family: var(--mono); font-size: 14px; line-height: 1.45; resize: vertical; }
+::placeholder { color: var(--muted); opacity: 1; }
+fieldset { border: 1px solid var(--hair); border-radius: 2px; margin: 0; padding: 10px 12px 12px; min-width: 0; }
+legend { padding: 0 4px; }
+
+/* Buttons */
+button, .filebtn {
+  font: inherit; font-size: 15px; font-weight: 600; line-height: 1.2; border-radius: 2px; padding: 11px 16px; min-height: 44px; cursor: pointer;
+  border: 1px solid var(--line); background: transparent; color: var(--fg);
+  display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+}
+button:hover, .filebtn:hover { background: var(--surface-2); }
+button.primary { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
+button.primary:hover { background: var(--accent); filter: brightness(1.08); }
+.btn-row { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+
+/* Segmented control */
+.seg { display: inline-flex; border: 1px solid var(--line); border-radius: 2px; overflow: hidden; }
+.seg input { position: absolute; opacity: 0; width: 1px; height: 1px; }
+.seg label { min-height: 44px; min-width: 56px; padding: 0 16px; display: inline-flex; align-items: center; justify-content: center; cursor: pointer; font-family: var(--mono); font-size: 15px; color: var(--muted); background: var(--field); }
+.seg label + input + label { border-left: 1px solid var(--line); }
+.seg input:checked + label { background: var(--accent); color: var(--accent-ink); font-weight: 600; }
+.seg input:focus-visible + label { outline: 3px solid var(--accent); outline-offset: -5px; box-shadow: inset 0 0 0 5px var(--field); }
+
+/* Status: a rubber stamp. Text plus double border, never a fill. */
+.status { font-family: var(--mono); font-size: 14px; margin: 12px 0 0; padding: 6px 10px; border: 3px double var(--line); border-radius: 2px; color: var(--muted); }
+.status.good { color: var(--good); border-color: var(--good); }
+.status.warn { color: var(--warn); border-color: var(--warn); }
+.status.bad { color: var(--bad); border-color: var(--bad); }
+.tag { display: inline-block; font-family: var(--mono); font-size: 11px; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; color: var(--warn); border: 3px double var(--warn); border-radius: 2px; padding: 0 5px; margin-left: 6px; vertical-align: 1px; }
+
+/* Readouts: answer cells; the key one is double underlined in red ink, as on a pad. */
+.chips { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 0; margin-bottom: 16px; background: var(--surface); border: 1px solid var(--hair); border-radius: 2px; }
+.chip { padding: 10px 14px; min-width: 0; border-right: 1px solid var(--hair); border-bottom: 1px solid var(--hair); margin: 0 -1px -1px 0; }
+.chip .k { font-family: var(--mono); font-size: 11.5px; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); }
+.chip .v { font-family: var(--mono); font-size: 20px; font-weight: 600; font-variant-numeric: tabular-nums; overflow-wrap: anywhere; }
+.chip .s { font-family: var(--mono); font-size: 13px; color: var(--muted); font-variant-numeric: tabular-nums; }
+.chip.mark .v { text-decoration: underline double var(--mark); text-decoration-thickness: 1.5px; text-underline-offset: 5px; }
+
+/* Tables */
+.scroll { overflow: auto; max-height: 520px; border: 1px solid var(--hair); border-radius: 2px; background: var(--surface); }
+table { border-collapse: collapse; width: 100%; font-family: var(--mono); font-size: 13.5px; font-variant-numeric: tabular-nums; }
+th, td { padding: 6px 10px; text-align: right; white-space: nowrap; border-bottom: 1px solid var(--hair); }
+th { position: sticky; top: 0; background: var(--surface-2); font-weight: 600; color: var(--fg); font-size: 13.5px; border-bottom: 1px solid var(--rule); }
+th small { display: block; font-weight: 400; color: var(--muted); font-size: 11.5px; }
+tbody tr:nth-child(5n) td { border-bottom-color: var(--chart-grid); }
+td.na { color: var(--muted); }
+
+/* Charts: hand-drawn SVG reads these. */
+.chart-box { position: relative; min-width: 0; }
+.chart-box svg { display: block; width: 100%; height: auto; }
+.chart-box svg text, svg.chart text { font-family: var(--mono); font-size: 12px; fill: var(--muted); }
+.legend { display: flex; flex-wrap: wrap; gap: 6px 16px; font-size: 14px; color: var(--muted); margin-top: 8px; }
+.legend span { display: inline-flex; align-items: center; gap: 6px; }
+.legend i { display: inline-block; width: 18px; height: 0; border-top: 2px solid var(--chart-1); }
+.legend i.dot { width: 12px; height: 12px; border: 2px solid var(--chart-2); border-radius: 50%; }
+.tip { position: absolute; pointer-events: none; background: var(--surface); border: 1px solid var(--line); border-radius: 2px; padding: 6px 8px; font-family: var(--mono); font-size: 12.5px; font-variant-numeric: tabular-nums; line-height: 1.4; white-space: nowrap; display: none; z-index: 2; }
+.tip b { font-weight: 600; color: var(--fg); }
+.tip .m { color: var(--muted); }
+
+/* Method and limits, footer */
+footer { margin-top: 14px; color: var(--muted); font-family: var(--body); font-size: 16px; line-height: 1.5; }
+footer > p { margin: 0 0 4px; }
+details { background: var(--surface); border: 1px solid var(--hair); border-radius: 2px; padding: 0 16px; margin-top: 12px; color: var(--fg); }
+summary { cursor: pointer; font-size: 1.3rem; padding: 12px 0; min-height: 44px; list-style-position: outside; }
+details[open] summary { border-bottom: 1px solid var(--hair); margin-bottom: 8px; }
+details[open] { padding-bottom: 12px; }
+details p, details li { max-width: 74ch; font-size: 15px; }
+details code, .eq { font-family: var(--mono); font-size: 13.5px; }
+.eq { display: block; background: var(--surface-2); border-left: 2px solid var(--rule); padding: 8px 12px; margin: 8px 0; overflow-x: auto; white-space: pre; }
+.maker { font-family: var(--mono); font-size: 12px; letter-spacing: .08em; text-transform: uppercase; color: var(--rule); }
+
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; scroll-behavior: auto !important; } }
+
+/* Wellpath layout */
+.input-grid { display: grid; grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr); gap: 20px; }
+@media (max-width: 760px) { .input-grid { grid-template-columns: minmax(0, 1fr); } }
+#surveys { min-height: 300px; white-space: pre; overflow: auto; }
+.controls { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; align-content: start; }
+.controls .full { grid-column: 1 / -1; }
+.tie-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+#file { position: absolute; opacity: 0; width: 1px; height: 1px; }
+#file:focus-visible + .filebtn { outline: 3px solid var(--accent); outline-offset: 2px; }
+.charts { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 16px; margin-bottom: 16px; }
+.chart-box svg { touch-action: none; }
+tr.maxdls td { background: color-mix(in srgb, var(--mark) 12%, var(--surface)); }
+tr.maxdls td:first-child { box-shadow: inset 3px 0 0 var(--mark); }
+tr.tiein td { color: var(--muted); }
+.table-head { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 8px; margin-bottom: 12px; }
+.table-head h2 { margin: 0; }
+#csvFallback { margin-top: 10px; min-height: 160px; }
+input[aria-invalid="true"] { border-color: var(--bad); box-shadow: inset 0 0 0 1px var(--bad); }
+.interp-row { display: flex; flex-wrap: wrap; gap: 8px; align-items: end; }
+.interp-row .field { width: 180px; }
+#interpOut { margin-top: 12px; font-family: var(--mono); font-size: 14px; font-variant-numeric: tabular-nums; overflow-wrap: anywhere; }
+</style>
+
+<div class="wrap" data-cat="drilling">
+  <header class="sheet-head">
+    <dl class="tb" aria-label="Sheet">
+      <div class="no"><dt>Sheet</dt><dd>01 of 13</dd></div>
+      <div><dt>Subject</dt><dd>Surveys</dd></div>
+      <div><dt>Method</dt><dd>Min. curvature</dd></div>
+      <div><dt>Units</dt><dd>ft or m</dd></div>
+    </dl>
+    <h1>Wellpath</h1>
+    <p class="lede">Directional survey calculator. Paste MD, inclination and azimuth; get TVD, north, east, vertical section, dogleg severity, build and turn by minimum curvature.</p>
+  </header>
+
+  <section class="panel" aria-labelledby="inHead">
+    <h2 id="inHead">Surveys</h2>
+    <div class="input-grid">
+      <div class="field">
+        <label for="surveys">Survey data (MD, Inc, Azi) <span class="tag" id="exampleTag">Example data</span></label>
+        <textarea id="surveys" spellcheck="false" autocomplete="off" aria-describedby="surveysHint"># Example data: horizontal well, vertical to KOP 8,500 ft, ~10 deg/100 ft build to 90 deg, ~4,000 ft lateral turning through north. Units ft.
+MD,Inc,Azi
+0,0.00,0.0
+1500,0.35,212.4
+3000,0.52,198.7
+4500,0.41,226.1
+6000,0.63,241.8
+7500,0.48,219.3
+8500,0.55,205.6
+8594,9.80,352.0
+8688,19.10,356.4
+8782,28.60,357.2
+8876,38.20,357.5
+8970,47.50,357.8
+9064,57.00,358.1
+9158,66.40,358.3
+9252,75.90,358.6
+9346,85.20,358.9
+9440,90.10,359.1
+9780,90.40,359.6
+10120,89.80,0.3
+10460,90.60,0.9
+10800,90.20,1.4
+11140,89.70,1.8
+11480,90.30,2.3
+11820,90.90,2.7
+12160,90.10,3.0
+12500,89.60,3.4
+12840,90.20,3.7
+13180,90.00,3.9
+13520,89.90,4.1
+</textarea>
+        <p class="hint" id="surveysHint">Comma, tab or space separated. A header row is optional; columns named MD, Inc and Azi are found in any order and extra columns are ignored. Lines starting with # are comments.</p>
+      </div>
+      <div class="controls">
+        <fieldset class="full">
+          <legend>Depth units</legend>
+          <div class="seg" role="radiogroup" aria-label="Depth units">
+            <input type="radio" name="units" id="unitsFt" value="ft" checked><label for="unitsFt">ft</label>
+            <input type="radio" name="units" id="unitsM" value="m"><label for="unitsM">m</label>
+          </div>
+          <p class="hint" id="unitsHint">Rates per 100 ft. Units label your data; numbers are not converted.</p>
+        </fieldset>
+        <div class="field full">
+          <label for="vsAzi">VS azimuth (deg)</label>
+          <input type="number" id="vsAzi" step="any" inputmode="decimal" placeholder="auto: closure azimuth" aria-describedby="vsHint">
+          <p class="hint" id="vsHint">Blank uses the closure azimuth to the last station.</p>
+        </div>
+        <fieldset class="full">
+          <legend>Tie-in (blank: surface 0, 0, 0)</legend>
+          <div class="tie-grid">
+            <div class="field"><label for="tieMd">MD</label><input type="number" id="tieMd" step="any" inputmode="decimal" placeholder="0"></div>
+            <div class="field"><label for="tieTvd">TVD</label><input type="number" id="tieTvd" step="any" inputmode="decimal" placeholder="0"></div>
+            <div class="field"><label for="tieN">N (+) / S (-)</label><input type="number" id="tieN" step="any" inputmode="decimal" placeholder="0"></div>
+            <div class="field"><label for="tieE">E (+) / W (-)</label><input type="number" id="tieE" step="any" inputmode="decimal" placeholder="0"></div>
+          </div>
+        </fieldset>
+        <div class="btn-row full">
+          <button type="button" class="primary" id="calc">Calculate</button>
+          <input type="file" id="file" accept=".csv,.tsv,.txt,.json,text/csv,text/plain,application/json">
+          <label for="file" class="filebtn" id="fileLabel">Upload CSV</label>
+          <button type="button" id="resetExample">Load example</button>
+        </div>
+      </div>
+    </div>
+    <p class="status" id="status" role="status" aria-live="polite">Ready.</p>
+  </section>
+
+  <div class="chips" id="chips" aria-label="Summary"></div>
+
+  <div class="charts">
+    <section class="panel" aria-labelledby="planHead">
+      <h3 id="planHead">Plan view</h3>
+      <div class="chart-box" id="planBox"></div>
+      <div class="legend"><span><i></i>Well path, equal scale, N up</span><span><i class="dot"></i>Max DLS station</span></div>
+    </section>
+    <section class="panel" aria-labelledby="secHead">
+      <h3 id="secHead">Section view</h3>
+      <div class="chart-box" id="secBox"></div>
+      <div class="legend"><span><i></i><span id="secLegend">VS vs TVD, equal scale</span></span><span><i class="dot"></i>Max DLS station</span></div>
+    </section>
+  </div>
+
+  <section class="panel" aria-labelledby="interpHead">
+    <h2 id="interpHead">Interpolate at MD</h2>
+    <div class="interp-row">
+      <div class="field"><label for="interpMd">MD</label><input type="number" id="interpMd" step="any" inputmode="decimal" value="9000"></div>
+      <button type="button" id="interpBtn">Interpolate</button>
+    </div>
+    <div id="interpOut" aria-live="polite"></div>
+  </section>
+
+  <section class="panel" aria-labelledby="resHead">
+    <div class="table-head">
+      <h2 id="resHead">Results</h2>
+      <button type="button" id="copyCsv">Copy results as CSV</button>
+    </div>
+    <div class="scroll" tabindex="0" aria-label="Results table, scrollable">
+      <table id="results"><thead></thead><tbody></tbody></table>
+    </div>
+    <label for="csvFallback" id="csvFallbackLabel" class="lbl" hidden>Clipboard was not available. Select and copy the text below.</label>
+    <textarea id="csvFallback" readonly hidden></textarea>
+  </section>
+
+  <footer>
+    <p>Built by Will Whitmire. Runs entirely in your browser; nothing you enter is uploaded.</p>
+    <p class="maker">W. Whitmire / Field Tools / No. 01</p>
+    <details id="method">
+      <summary>Method and limits</summary>
+      <h3>Minimum curvature</h3>
+      <p>Each course between two surveys is modeled as a circular arc in the plane of the two survey directions (SPE / ISCWSA industry standard). With inclination I and azimuth A at the upper (1) and lower (2) stations and course length dMD:</p>
+      <span class="eq">beta = arccos( cos(I2 - I1) - sin I1 sin I2 (1 - cos(A2 - A1)) )
+RF   = (2 / beta) tan(beta / 2),   RF = 1 when beta &lt; 1e-7 rad
+dN   = dMD/2 (sin I1 cos A1 + sin I2 cos A2) RF
+dE   = dMD/2 (sin I1 sin A1 + sin I2 sin A2) RF
+dTVD = dMD/2 (cos I1 + cos I2) RF</span>
+      <p>The dogleg is computed in the equivalent form beta = 2 atan2(|t2 - t1|, |t2 + t1|) on the unit tangent vectors t, which is exact for the same geometry and keeps full precision for tiny doglegs where arccos near 1 loses digits.</p>
+      <h3>Rates, section and closure</h3>
+      <span class="eq">DLS   = beta(deg) / dMD x C        C = 100 ft or 30 m
+Build = (I2 - I1) / dMD x C
+Turn  = shortest signed (A2 - A1) in (-180, 180] / dMD x C
+VS    = N cos(VSaz) + E sin(VSaz)
+Closure distance = sqrt(N^2 + E^2), closure azimuth = atan2(E, N)</span>
+      <p>Each rate is reported on the lower station of its course. Turn is shown as n/a (blank in the CSV) when either station of the course is within 3 degrees of vertical, where azimuth readings are unreliable and azimuth change per course length is not a steering number. DLS is still reported there. Interpolation at an MD inside a course follows the same circular arc: the direction is the spherical interpolation of the two end directions, and the position comes from a minimum curvature step from the upper station.</p>
+      <h3>Assumptions and limits</h3>
+      <ul>
+        <li>Azimuths are taken as given. Wellpath applies no magnetic declination, grid convergence or north reference conversion; enter all surveys in one reference.</li>
+        <li>No survey tool error model, uncertainty ellipses or anti-collision. Positions are the nominal path only.</li>
+        <li>The unit toggle changes the course length for rates (100 ft or 30 m) and the labels. It does not convert numbers.</li>
+        <li>Default tie-in is the surface: MD 0, TVD 0, N 0, E 0, vertical. If the first survey is deeper than MD 0, the hole from surface to it is assumed to follow a minimum curvature arc from vertical (TVD = MD for a vertical first survey). Surveys above a user tie-in MD are ignored.</li>
+        <li>If the tie-in MD matches a survey, that survey's inclination and azimuth are used at the tie-in. Otherwise the tie-in is taken as vertical.</li>
+        <li>Measured depth must strictly increase. Inclination must be 0 to 180 degrees. Azimuth is normalized to [0, 360). Two consecutive surveys pointing in opposite directions (dogleg near 180 degrees) are rejected.</li>
+        <li>Turn rate is the azimuth change per course length. Near vertical, azimuth readings swing widely, so turn is not reported below 3 degrees inclination. The DLS a large azimuth change produces at low inclination can still look large while the hole barely moves; read it against inclination.</li>
+        <li>Minimum curvature is exact for a constant-curvature arc between stations. For real paths the error depends on survey spacing; closer surveys give a better path.</li>
+        <li>Both charts are drawn at equal scale on both axes. Section view plots TVD increasing downward.</li>
+        <li>Limits: 5 MB per file and 50,000 survey rows.</li>
+      </ul>
+    </details>
+  </footer>
+</div>
+
+<script id="core">
+var WellpathCore = (function () {
+  "use strict";
+  var COURSE_LENGTH = { ft: 100.0, m: 30.0 };
+  var BETA_SMALL = 1e-7;
+  var BETA_MAX = Math.PI - 1e-6;
+  var TURN_MIN_INC = 3.0; // no turn rate within this many degrees of vertical
+  var MAX_ROWS = 50000;
+  var MAX_BYTES = 5 * 1024 * 1024;
+
+  function SurveyError(message) {
+    var e = new Error(message);
+    e.name = "SurveyError";
+    e.isSurveyError = true;
+    return e;
+  }
+
+  function rad(d) { return d * (Math.PI / 180); }
+  function deg(r) { return r * (180 / Math.PI); }
+  function g(x) { return String(Number(x.toPrecision(6))); }
+
+  function finite(x, what) {
+    var v = typeof x === "number" ? x : Number(x);
+    if (typeof x === "string" && x.trim() === "") v = NaN;
+    if (typeof x === "boolean" || x === null || x === undefined) v = NaN;
+    if (!isFinite(v)) throw SurveyError(what + " is not a finite number.");
+    return v;
+  }
+
+  function normalizeAzimuth(a) {
+    var r = a % 360.0;
+    if (r < 0.0) r += 360.0;
+    if (r >= 360.0) r = 0.0;
+    if (r === 0) r = 0; // drop negative zero
+    return r;
+  }
+
+  function turnDifference(a1, a2) {
+    var d = (a2 - a1) % 360.0;
+    if (d <= -180.0) d += 360.0;
+    else if (d > 180.0) d -= 360.0;
+    return d;
+  }
+
+  function unitVector(i, a) {
+    var s = Math.sin(i);
+    return [s * Math.cos(a), s * Math.sin(a), Math.cos(i)];
+  }
+
+  function doglegVec(t1, t2) {
+    var dx = t2[0] - t1[0], dy = t2[1] - t1[1], dz = t2[2] - t1[2];
+    var sx = t2[0] + t1[0], sy = t2[1] + t1[1], sz = t2[2] + t1[2];
+    return 2.0 * Math.atan2(Math.sqrt(dx * dx + dy * dy + dz * dz), Math.sqrt(sx * sx + sy * sy + sz * sz));
+  }
+
+  function dogleg(inc1, azi1, inc2, azi2) {
+    return doglegVec(unitVector(rad(inc1), rad(azi1)), unitVector(rad(inc2), rad(azi2)));
+  }
+
+  function ratioFactor(beta) {
+    if (beta < BETA_SMALL) return 1.0;
+    return 2.0 / beta * Math.tan(beta / 2.0);
+  }
+
+  function minCurveStep(dmd, inc1, azi1, inc2, azi2) {
+    var t1 = unitVector(rad(inc1), rad(azi1));
+    var t2 = unitVector(rad(inc2), rad(azi2));
+    var beta = doglegVec(t1, t2);
+    if (beta > BETA_MAX) {
+      throw SurveyError("Two consecutive surveys point in opposite directions (dogleg near 180 deg); minimum curvature is undefined there.");
+    }
+    var h = dmd / 2.0 * ratioFactor(beta);
+    return { dn: h * (t1[0] + t2[0]), de: h * (t1[1] + t2[1]), dv: h * (t1[2] + t2[2]), beta: beta };
+  }
+
+  function validate(rows) {
+    var out = [];
+    for (var k = 0; k < rows.length; k++) {
+      var r = rows[k];
+      var md, inc, azi;
+      if (Array.isArray(r)) { md = r[0]; inc = r[1]; azi = r[2]; }
+      else if (r && typeof r === "object") { md = r.md; inc = r.inc; azi = r.azi; }
+      md = finite(md, "Survey " + (k + 1) + " MD");
+      inc = finite(inc, "Survey " + (k + 1) + " inclination");
+      azi = finite(azi, "Survey " + (k + 1) + " azimuth");
+      if (inc < 0.0 || inc > 180.0) {
+        throw SurveyError("Survey " + (k + 1) + " (MD " + g(md) + "): inclination " + g(inc) + " is outside 0 to 180 degrees.");
+      }
+      if (out.length && !(md > out[out.length - 1].md)) {
+        throw SurveyError("Survey " + (k + 1) + ": MD " + g(md) + " is not greater than the previous MD " + g(out[out.length - 1].md) + ". Measured depth must strictly increase.");
+      }
+      out.push({ md: md, inc: inc, azi: normalizeAzimuth(azi) });
+    }
+    if (!out.length) throw SurveyError("No surveys given.");
+    return out;
+  }
+
+  function vs(n, e, az) { var a = rad(az); return n * Math.cos(a) + e * Math.sin(a); }
+
+  function closure(n, e) {
+    var d = Math.hypot(n, e);
+    if (d === 0) return { distance: 0, azimuth: 0 };
+    return { distance: d, azimuth: normalizeAzimuth(deg(Math.atan2(e, n))) };
+  }
+
+  function point(md, inc, azi, tvd, n, e, dl, dls, build, turn, tie, suppressed) {
+    return { md: md, inc: inc, azi: azi, tvd: tvd, north: n, east: e, vs: 0, dogleg: dl, dls: dls, build: build, turn: turn, isTieIn: !!tie, turnSuppressed: !!suppressed };
+  }
+  function nearVertical(inc) { return inc < TURN_MIN_INC || inc > 180.0 - TURN_MIN_INC; }
+
+  // opts: { units: "ft"|"m", vsAzimuth: number|null, tieIn: {md,tvd,north,east,inc,azi}|null }
+  function compute(rows, opts) {
+    opts = opts || {};
+    var units = opts.units || "ft";
+    if (!Object.prototype.hasOwnProperty.call(COURSE_LENGTH, units)) throw SurveyError("Units must be ft or m.");
+    var course = COURSE_LENGTH[units];
+    var stations = validate(rows);
+    var t = opts.tieIn || {};
+    var tie = {
+      md: finite(t.md === undefined ? 0 : t.md, "Tie-in MD"),
+      tvd: finite(t.tvd === undefined ? 0 : t.tvd, "Tie-in TVD"),
+      north: finite(t.north === undefined ? 0 : t.north, "Tie-in north"),
+      east: finite(t.east === undefined ? 0 : t.east, "Tie-in east"),
+      inc: finite(t.inc === undefined ? 0 : t.inc, "Tie-in inclination"),
+      azi: normalizeAzimuth(finite(t.azi === undefined ? 0 : t.azi, "Tie-in azimuth"))
+    };
+    if (tie.inc < 0 || tie.inc > 180) throw SurveyError("Tie-in inclination " + g(tie.inc) + " is outside 0 to 180 degrees.");
+    var skipped = 0, kept = [];
+    for (var s = 0; s < stations.length; s++) {
+      if (stations[s].md < tie.md) skipped++; else kept.push(stations[s]);
+    }
+    if (!kept.length) throw SurveyError("Every survey is above the tie-in MD " + g(tie.md) + ". Surveys must reach the tie-in or below.");
+    var points = [], rest;
+    if (kept[0].md === tie.md) {
+      points.push(point(kept[0].md, kept[0].inc, kept[0].azi, tie.tvd, tie.north, tie.east, 0, 0, 0, 0, true));
+      rest = kept.slice(1);
+    } else {
+      points.push(point(tie.md, tie.inc, tie.azi, tie.tvd, tie.north, tie.east, 0, 0, 0, 0, true));
+      rest = kept;
+    }
+    for (var i = 0; i < rest.length; i++) {
+      var st = rest[i], p = points[points.length - 1];
+      var dmd = st.md - p.md;
+      var step = minCurveStep(dmd, p.inc, p.azi, st.inc, st.azi);
+      var dl = deg(step.beta);
+      var scale = course / dmd;
+      var suppressed = nearVertical(p.inc) || nearVertical(st.inc);
+      var turn = suppressed ? 0.0 : turnDifference(p.azi, st.azi) * scale;
+      points.push(point(st.md, st.inc, st.azi, p.tvd + step.dv, p.north + step.dn, p.east + step.de, dl, dl * scale, (st.inc - p.inc) * scale, turn, false, suppressed));
+    }
+    var last = points[points.length - 1];
+    var c = closure(last.north, last.east);
+    var vsAz, auto;
+    if (opts.vsAzimuth === null || opts.vsAzimuth === undefined) { vsAz = c.azimuth; auto = true; }
+    else { vsAz = normalizeAzimuth(finite(opts.vsAzimuth, "VS azimuth")); auto = false; }
+    for (var j = 0; j < points.length; j++) points[j].vs = vs(points[j].north, points[j].east, vsAz);
+    var maxDls = 0, maxMd = points[0].md, maxIdx = 0;
+    for (var m = 1; m < points.length; m++) {
+      if (points[m].dls > maxDls) { maxDls = points[m].dls; maxMd = points[m].md; maxIdx = m; }
+    }
+    return {
+      points: points, units: units, courseLength: course, tieIn: tie,
+      summary: {
+        td_md: last.md, td_tvd: last.tvd, vs_azimuth: vsAz, vs_azimuth_is_auto: auto,
+        closure_distance: c.distance, closure_azimuth: c.azimuth,
+        max_dls: maxDls, max_dls_md: maxMd, max_dls_index: maxIdx,
+        skipped_above_tie_in: skipped
+      }
+    };
+  }
+
+  function interpolate(path, md) {
+    md = finite(md, "Interpolation MD");
+    var pts = path.points;
+    if (md < pts[0].md || md > pts[pts.length - 1].md) {
+      throw SurveyError("MD " + g(md) + " is outside the surveyed interval " + g(pts[0].md) + " to " + g(pts[pts.length - 1].md) + ".");
+    }
+    for (var q = 0; q < pts.length; q++) {
+      if (pts[q].md === md) return Object.assign({}, pts[q]);
+    }
+    var k = 1;
+    while (pts[k].md < md) k++;
+    var p1 = pts[k - 1], p2 = pts[k];
+    var f = (md - p1.md) / (p2.md - p1.md);
+    var t1 = unitVector(rad(p1.inc), rad(p1.azi));
+    var t2 = unitVector(rad(p2.inc), rad(p2.azi));
+    var beta = doglegVec(t1, t2), w1, w2;
+    if (beta < BETA_SMALL) { w1 = 1.0 - f; w2 = f; }
+    else { var sb = Math.sin(beta); w1 = Math.sin((1.0 - f) * beta) / sb; w2 = Math.sin(f * beta) / sb; }
+    var tx = w1 * t1[0] + w2 * t2[0], ty = w1 * t1[1] + w2 * t2[1], tz = w1 * t1[2] + w2 * t2[2];
+    var norm = Math.sqrt(tx * tx + ty * ty + tz * tz);
+    tx /= norm; ty /= norm; tz /= norm;
+    var horiz = Math.hypot(tx, ty);
+    var inc = deg(Math.atan2(horiz, tz));
+    var azi = horiz < 1e-12 ? p1.azi : normalizeAzimuth(deg(Math.atan2(ty, tx)));
+    var step = minCurveStep(md - p1.md, p1.inc, p1.azi, inc, azi);
+    var n = p1.north + step.dn, e = p1.east + step.de;
+    return {
+      md: md, inc: inc, azi: azi, tvd: p1.tvd + step.dv, north: n, east: e,
+      vs: vs(n, e, path.summary.vs_azimuth), dogleg: p2.dogleg * f, dls: p2.dls, build: p2.build, turn: p2.turn, isTieIn: false, turnSuppressed: p2.turnSuppressed
+    };
+  }
+
+  // ---- parsing ----
+  var MD_NAMES = ["md", "measured depth", "measureddepth", "depth", "mdepth"];
+  var INC_NAMES = ["inc", "incl", "inclination", "angle"];
+  var AZI_NAMES = ["azi", "az", "azm", "azimuth", "dir", "direction"];
+  var NUM_RE = /^[+-]?(\d+\.?\d*|\.\d+)([eE][+-]?\d+)?$/;
+
+  function splitLine(line) {
+    var parts;
+    if (line.indexOf("\t") >= 0) parts = line.split("\t");
+    else if (line.indexOf(",") >= 0) parts = line.split(",");
+    else if (line.indexOf(";") >= 0) parts = line.split(";");
+    else parts = line.split(/\s+/);
+    return parts.map(function (p) { return p.trim().replace(/^["']+|["']+$/g, "").trim(); });
+  }
+  function num(s) {
+    if (!NUM_RE.test(s)) return null;
+    var v = Number(s);
+    return isFinite(v) ? v : null;
+  }
+  function matchName(cell, names) {
+    var c = cell.toLowerCase().replace(/\(.*?\)|\[.*?\]/g, "").trim();
+    c = c.replace(/[^a-z ]/g, "").trim();
+    return names.indexOf(c) >= 0 || names.indexOf(c.replace(/ /g, "")) >= 0;
+  }
+  function clip(s) { return s.length > 60 ? s.slice(0, 60) + "..." : s; }
+
+  function parseText(text) {
+    if (typeof text !== "string") throw SurveyError("No text given.");
+    if (text.length > MAX_BYTES) throw SurveyError("Input is larger than 5 MB.");
+    var trimmed = text.replace(/^﻿/, "").trim();
+    if (trimmed.charAt(0) === "[" || trimmed.charAt(0) === "{") return parseJson(trimmed);
+    var cols = [0, 1, 2], headerSeen = false, rows = [];
+    var lines = text.replace(/^﻿/, "").split(/\r\n|\r|\n/);
+    for (var li = 0; li < lines.length; li++) {
+      var lineno = li + 1, line = lines[li].trim();
+      if (!line || line.charAt(0) === "#") continue;
+      var cells = splitLine(line);
+      var nums = cells.map(num);
+      if (!rows.length && !headerSeen && nums.slice(0, 3).some(function (v) { return v === null; })) {
+        var found = [null, null, null], lists = [MD_NAMES, INC_NAMES, AZI_NAMES];
+        for (var ci = 0; ci < cells.length; ci++) {
+          for (var k = 0; k < 3; k++) {
+            if (found[k] === null && matchName(cells[ci], lists[k])) found[k] = ci;
+          }
+        }
+        if (found.every(function (f) { return f !== null; })) cols = found;
+        else if (found.some(function (f) { return f !== null; })) throw SurveyError("Line " + lineno + ": header found but could not find all of MD, Inc and Azi columns.");
+        else throw SurveyError("Line " + lineno + ": expected a header (MD, Inc, Azi) or three numbers, got \"" + clip(line) + "\".");
+        headerSeen = true;
+        continue;
+      }
+      var need = Math.max(cols[0], cols[1], cols[2]) + 1;
+      if (cells.length < need) throw SurveyError("Line " + lineno + ": expected at least " + need + " columns, found " + cells.length + ".");
+      var names = ["MD", "inclination", "azimuth"], vals = [];
+      for (var q = 0; q < 3; q++) {
+        var v = nums[cols[q]];
+        if (v === null) throw SurveyError("Line " + lineno + ": " + names[q] + " \"" + clip(cells[cols[q]]) + "\" is not a number.");
+        vals.push(v);
+      }
+      rows.push(vals);
+      if (rows.length > MAX_ROWS) throw SurveyError("More than 50,000 survey rows.");
+    }
+    if (!rows.length) throw SurveyError("No survey rows found.");
+    return rows;
+  }
+
+  var UNIT_WORDS = { ft: "ft", feet: "ft", foot: "ft", usft: "ft", m: "m", metre: "m", metres: "m", meter: "m", meters: "m" };
+  var COMMENT_UNITS = /\bunits?\s*[:=]?\s*(ft|feet|foot|usft|m|metres|meters|metre|meter)\b/i;
+  var BRACKET = /[(\[]\s*([a-z]+)\s*[)\]]/;
+
+  // Guess the depth unit from the input. Returns { units: "ft"|"m"|null, why: string }.
+  function detectUnits(text) {
+    var none = { units: null, why: "" };
+    if (typeof text !== "string") return none;
+    var body = text.replace(/^\ufeff/, "");
+    var stripped = body.replace(/^\s+/, "");
+    if (stripped.charAt(0) === "{") {
+      var data;
+      try { data = JSON.parse(stripped); } catch (e) { return none; }
+      var u = data && typeof data.units === "string" ? UNIT_WORDS[data.units.trim().toLowerCase()] : null;
+      return u ? { units: u, why: "from \"units\" in the JSON" } : none;
+    }
+    if (stripped.charAt(0) === "[") return none;
+    var lines = body.split(/\r\n|\r|\n/).slice(0, 200);
+    for (var i = 0; i < lines.length; i++) {
+      var line = lines[i].trim();
+      if (!line) continue;
+      if (line.charAt(0) === "#") {
+        var m = COMMENT_UNITS.exec(line);
+        if (m) return { units: UNIT_WORDS[m[1].toLowerCase()], why: "from the comment line" };
+        continue;
+      }
+      var cells = splitLine(line);
+      if (cells.slice(0, 3).every(function (c) { return num(c) !== null; })) return none;
+      for (var k = 0; k < cells.length; k++) {
+        if (matchName(cells[k], MD_NAMES)) {
+          var b = BRACKET.exec(cells[k].toLowerCase());
+          if (b && Object.prototype.hasOwnProperty.call(UNIT_WORDS, b[1])) return { units: UNIT_WORDS[b[1]], why: "from the header '" + cells[k] + "'" };
+        }
+      }
+      return none;
+    }
+    return none;
+  }
+
+  function parseJson(text) {
+    var data;
+    try { data = JSON.parse(text); } catch (e) { throw SurveyError("JSON could not be read."); }
+    if (data && !Array.isArray(data) && typeof data === "object") data = data.surveys;
+    if (!Array.isArray(data)) throw SurveyError("JSON must be a list of surveys or an object with a surveys list.");
+    if (data.length > MAX_ROWS) throw SurveyError("More than 50,000 survey rows.");
+    var rows = [];
+    for (var k = 0; k < data.length; k++) {
+      var item = data[k], vals;
+      if (Array.isArray(item) && item.length >= 3) vals = item.slice(0, 3);
+      else if (item && typeof item === "object" && !Array.isArray(item)) vals = [item.md, item.inc, item.azi];
+      else throw SurveyError("JSON survey " + (k + 1) + ": expected {md, inc, azi} or [md, inc, azi].");
+      for (var q = 0; q < 3; q++) {
+        if (typeof vals[q] !== "number" || !isFinite(vals[q])) throw SurveyError("JSON survey " + (k + 1) + ": " + ["md", "inc", "azi"][q] + " is missing or not a number.");
+      }
+      rows.push(vals);
+    }
+    if (!rows.length) throw SurveyError("No survey rows found.");
+    return rows;
+  }
+
+  return {
+    COURSE_LENGTH: COURSE_LENGTH, BETA_SMALL: BETA_SMALL, TURN_MIN_INC: TURN_MIN_INC, MAX_ROWS: MAX_ROWS, MAX_BYTES: MAX_BYTES,
+    normalizeAzimuth: normalizeAzimuth, turnDifference: turnDifference, dogleg: dogleg,
+    ratioFactor: ratioFactor, minCurveStep: minCurveStep, validate: validate, closure: closure,
+    compute: compute, interpolate: interpolate, parseText: parseText, detectUnits: detectUnits
+  };
+})();
+</script>
+
+<script>
+(function () {
+  "use strict";
+  var C = WellpathCore;
+  var $ = function (id) { return document.getElementById(id); };
+  var SVGNS = "http://www.w3.org/2000/svg";
+  var EXAMPLE = $("surveys").value;
+  var state = { path: null, error: null, unitsByUser: false };
+  var MAX_DOTS = 2000;
+  var TABLE_MAX = 2000; // rows drawn in the results table; the CSV always has all of them // above this many stations the charts draw the line only
+
+  // One cached formatter per decimal count: building a formatter per cell is slow on big surveys.
+  var fmts = {};
+  function nf(x, d) {
+    var f = fmts[d] || (fmts[d] = new Intl.NumberFormat("en-US", { minimumFractionDigits: d, maximumFractionDigits: d }));
+    return f.format(x);
+  }
+  function units() { return $("unitsM").checked ? "m" : "ft"; }
+  function rateLabel() { return units() === "m" ? "/30m" : "/100ft"; }
+
+  function setStatus(msg, kind) {
+    var s = $("status");
+    s.textContent = msg;
+    s.className = "status" + (kind ? " " + kind : "");
+  }
+
+  function readNum(id) {
+    var el = $(id), raw = el.value.trim();
+    if (el.validity && el.validity.badInput) {
+      throw Object.assign(new Error(el.labels[0].textContent + " is not a number."), { isSurveyError: true });
+    }
+    if (raw === "") return null;
+    var v = Number(raw);
+    if (!isFinite(v)) throw Object.assign(new Error(el.labels[0].textContent + " is not a number."), { isSurveyError: true });
+    return v;
+  }
+
+  function clearResults() {
+    state.path = null;
+    $("chips").replaceChildren();
+    $("planBox").replaceChildren();
+    $("secBox").replaceChildren();
+    $("results").tHead.replaceChildren();
+    $("results").tBodies[0].replaceChildren();
+    $("interpOut").textContent = "";
+    $("copyCsv").disabled = true;
+  }
+
+  function run() {
+    var text = $("surveys").value;
+    var why = "";
+    if (!state.unitsByUser) {
+      var det = C.detectUnits(text);
+      if (det.units) {
+        $("unitsFt").checked = det.units === "ft";
+        $("unitsM").checked = det.units === "m";
+        why = " Set to " + det.units + " " + det.why + "; tap the other unit to change.";
+      }
+    }
+    var u = units();
+    $("unitsHint").textContent = (u === "m" ? "Rates per 30 m." : "Rates per 100 ft.") + " Units label your data; numbers are not converted." + why;
+    $("tieMd").removeAttribute("aria-invalid");
+    try {
+      var rows = C.parseText(text);
+      var tieMd = readNum("tieMd");
+      var tie = null;
+      if (tieMd !== null) tie = { md: tieMd, tvd: readNum("tieTvd") || 0, north: readNum("tieN") || 0, east: readNum("tieE") || 0 };
+      else if (readNum("tieTvd") !== null || readNum("tieN") !== null || readNum("tieE") !== null) {
+        $("tieMd").setAttribute("aria-invalid", "true");
+        throw Object.assign(new Error("Enter the tie-in MD (the depth where this TVD, N and E apply) in the MD box under Tie-in."), { isSurveyError: true });
+      }
+      var path = C.compute(rows, { units: u, vsAzimuth: readNum("vsAzi"), tieIn: tie });
+      state.path = path;
+      var msg = "Computed " + (path.points.length) + " stations.";
+      var kind = "good";
+      if (path.summary.skipped_above_tie_in) {
+        msg += " " + path.summary.skipped_above_tie_in + " survey(s) above the tie-in MD were ignored.";
+        kind = "warn";
+      }
+      var tieMdSurveyed = rows.some(function (r) { return r[0] === path.points[0].md; });
+      if (!tieMdSurveyed) {
+        msg += " Tie-in station added at MD " + nf(path.points[0].md, 2) + ".";
+      }
+      setStatus(msg, kind);
+    } catch (e) {
+      if (!e.isSurveyError) throw e;
+      setStatus(e.message, "bad");
+      clearResults();
+      return;
+    }
+    $("copyCsv").disabled = false;
+    $("exampleTag").hidden = text !== EXAMPLE;
+    renderAll();
+  }
+
+  function renderAll() {
+    var p = state.path;
+    if (!p) return;
+    renderChips(p);
+    renderTable(p);
+    renderPlan(p);
+    renderSection(p);
+    runInterp();
+  }
+
+  function chip(k, v, s, mark) {
+    var d = document.createElement("div");
+    d.className = "chip" + (mark ? " mark" : "");
+    var a = document.createElement("div"); a.className = "k"; a.textContent = k;
+    var b = document.createElement("div"); b.className = "v"; b.textContent = v;
+    d.appendChild(a); d.appendChild(b);
+    if (s) { var c = document.createElement("div"); c.className = "s"; c.textContent = s; d.appendChild(c); }
+    return d;
+  }
+
+  function renderChips(p) {
+    var s = p.summary, u = p.units, box = $("chips");
+    box.replaceChildren(
+      chip("TD MD", nf(s.td_md, 1) + " " + u),
+      chip("TD TVD", nf(s.td_tvd, 1) + " " + u),
+      chip("Max DLS", nf(s.max_dls, 2) + "°" + rateLabel(), "at MD " + nf(s.max_dls_md, 1) + " " + u, true),
+      chip("Closure", nf(s.closure_distance, 1) + " " + u, "@ " + nf(s.closure_azimuth, 2) + "° azimuth"),
+      chip("VS azimuth", nf(s.vs_azimuth, 2) + "°", s.vs_azimuth_is_auto ? "auto (closure)" : "user set")
+    );
+  }
+
+  var COLS = [
+    ["md", "MD", "u", 2], ["inc", "Inc", "°", 2], ["azi", "Azi", "°", 2], ["tvd", "TVD", "u", 2],
+    ["north", "N/S", "+N", 2], ["east", "E/W", "+E", 2], ["vs", "VS", "u", 2],
+    ["dls", "DLS", "r", 2], ["build", "BR", "r", 2], ["turn", "TR", "r", 2]
+  ];
+  function colUnit(c) {
+    if (c[2] === "u") return units();
+    if (c[2] === "r") return "°" + rateLabel();
+    if (c[2] === "+N" || c[2] === "+E") return units() + ", " + c[2];
+    return c[2];
+  }
+
+  function renderTable(p) {
+    var thead = $("results").tHead, tbody = $("results").tBodies[0];
+    var hr = document.createElement("tr");
+    COLS.forEach(function (c) {
+      var th = document.createElement("th");
+      th.scope = "col";
+      th.appendChild(document.createTextNode(c[1]));
+      var sm = document.createElement("small"); sm.textContent = colUnit(c);
+      th.appendChild(sm);
+      hr.appendChild(th);
+    });
+    thead.replaceChildren(hr);
+    var frag = document.createDocumentFragment();
+    var shown = p.points.length > TABLE_MAX ? p.points.slice(0, TABLE_MAX) : p.points;
+    shown.forEach(function (pt, i) {
+      var tr = document.createElement("tr");
+      if (i === p.summary.max_dls_index && p.summary.max_dls > 0) tr.className = "maxdls";
+      else if (pt.isTieIn) tr.className = "tiein";
+      COLS.forEach(function (c) {
+        var td = document.createElement("td");
+        if (pt.isTieIn && (c[0] === "dls" || c[0] === "build" || c[0] === "turn")) td.textContent = "tie-in";
+        else if (c[0] === "turn" && pt.turnSuppressed) {
+          td.textContent = "n/a";
+          td.className = "na";
+          td.title = "Turn not reported: inclination below " + C.TURN_MIN_INC + " deg on this course, where azimuth is unreliable.";
+        } else td.textContent = nf(pt[c[0]], c[3]);
+        tr.appendChild(td);
+      });
+      frag.appendChild(tr);
+    });
+    if (shown.length < p.points.length) {
+      var more = document.createElement("tr"), cell = document.createElement("td");
+      cell.colSpan = COLS.length; cell.className = "na"; cell.style.textAlign = "left";
+      cell.textContent = "Showing the first " + nf(TABLE_MAX, 0) + " of " + nf(p.points.length, 0) + " stations. Copy results as CSV has every station.";
+      more.appendChild(cell); frag.appendChild(more);
+    }
+    tbody.replaceChildren(frag);
+  }
+
+  function csvText(p) {
+    var head = COLS.map(function (c) { return c[1].replace("/", "_") + " (" + colUnit(c).replace(/°/g, "deg").replace(", ", " ") + ")"; });
+    var lines = [head.join(",")];
+    p.points.forEach(function (pt) {
+      lines.push(COLS.map(function (c) { return (c[0] === "turn" && pt.turnSuppressed) ? "" : pt[c[0]].toFixed(4); }).join(","));
+    });
+    return lines.join("\n") + "\n";
+  }
+
+  // ---- charts ----
+  function el(name, attrs, parent) {
+    var e = document.createElementNS(SVGNS, name);
+    for (var k in attrs) e.setAttribute(k, attrs[k]);
+    if (parent) parent.appendChild(e);
+    return e;
+  }
+  function niceStep(span, target) {
+    var raw = span / Math.max(1, target);
+    var mag = Math.pow(10, Math.floor(Math.log10(raw)));
+    var r = raw / mag;
+    return (r <= 1 ? 1 : r <= 2 ? 2 : r <= 2.5 ? 2.5 : r <= 5 ? 5 : 10) * mag;
+  }
+  function tickLabel(v) {
+    var a = Math.abs(v);
+    if (a >= 1000) return nf(v, 0);
+    return String(Math.round(v * 100) / 100);
+  }
+
+  // Equal-scale chart. xs, ys: data arrays; yDown: true flips y so values increase downward.
+  function drawChart(box, cfg) {
+    var width = Math.max(260, Math.floor(box.clientWidth || 320));
+    var height = Math.round(Math.min(Math.max(width * 0.9, 260), 460));
+    var m = { l: 58, r: 14, t: 14, b: 40 };
+    var pw = width - m.l - m.r, ph = height - m.t - m.b;
+    var xs = cfg.xs, ys = cfg.ys;
+    var x0 = Math.min.apply(null, xs), x1 = Math.max.apply(null, xs);
+    var y0 = Math.min.apply(null, ys), y1 = Math.max.apply(null, ys);
+    var sx = x1 - x0, sy = y1 - y0;
+    var span = Math.max(sx, sy, 1e-9);
+    if (sx === 0 && sy === 0) span = 100;
+    // equal scale: one data unit is the same pixel length on both axes
+    var scale = Math.min(pw / Math.max(sx, span * 0.02, 1e-9), ph / Math.max(sy, span * 0.02, 1e-9)) * 0.92;
+    if (!isFinite(scale) || scale <= 0) scale = 1;
+    var cx = (x0 + x1) / 2, cy = (y0 + y1) / 2;
+    var X = function (v) { return m.l + pw / 2 + (v - cx) * scale; };
+    var Y = cfg.yDown ? function (v) { return m.t + ph / 2 + (v - cy) * scale; } : function (v) { return m.t + ph / 2 - (v - cy) * scale; };
+    var vx0 = cx - pw / 2 / scale, vx1 = cx + pw / 2 / scale;
+    var vy0 = cy - ph / 2 / scale, vy1 = cy + ph / 2 / scale;
+
+    var svg = el("svg", { viewBox: "0 0 " + width + " " + height, width: width, height: height, role: "img", "aria-label": cfg.label });
+    el("rect", { x: m.l, y: m.t, width: pw, height: ph, fill: "var(--field)", stroke: "var(--line)" }, svg);
+    var step = niceStep(Math.max(vx1 - vx0, vy1 - vy0), width < 400 ? 4 : 6);
+    var gGrid = el("g", {}, svg);
+    for (var t = Math.ceil(vx0 / step) * step; t <= vx1; t += step) {
+      var px = X(t);
+      el("line", { x1: px, x2: px, y1: m.t, y2: m.t + ph, stroke: t === 0 ? "var(--line)" : "var(--chart-grid)", "stroke-width": t === 0 ? 1.2 : 1 }, gGrid);
+      var tx = el("text", { x: px, y: m.t + ph + 14, "text-anchor": "middle" }, gGrid);
+      tx.textContent = tickLabel(t);
+    }
+    for (var u = Math.ceil(vy0 / step) * step; u <= vy1; u += step) {
+      var py = Y(u);
+      el("line", { x1: m.l, x2: m.l + pw, y1: py, y2: py, stroke: u === 0 ? "var(--line)" : "var(--chart-grid)", "stroke-width": u === 0 ? 1.2 : 1 }, gGrid);
+      var ty = el("text", { x: m.l - 5, y: py + 3.5, "text-anchor": "end" }, gGrid);
+      ty.textContent = tickLabel(u);
+    }
+    var xl = el("text", { x: m.l + pw / 2, y: height - 6, "text-anchor": "middle" }, svg);
+    xl.textContent = cfg.xLabel;
+    var yl = el("text", { x: 12, y: m.t + ph / 2, "text-anchor": "middle", transform: "rotate(-90 12 " + (m.t + ph / 2) + ")" }, svg);
+    yl.textContent = cfg.yLabel;
+
+    var d = "";
+    for (var i = 0; i < xs.length; i++) d += (i ? "L" : "M") + X(xs[i]).toFixed(2) + " " + Y(ys[i]).toFixed(2);
+    el("path", { d: d, fill: "none", stroke: "var(--chart-1)", "stroke-width": 2.25, "stroke-linejoin": "round", "stroke-linecap": "round" }, svg);
+    var gDots = el("g", {}, svg);
+    for (var j = 0; xs.length <= MAX_DOTS && j < xs.length; j++) {
+      el("circle", { cx: X(xs[j]), cy: Y(ys[j]), r: 2.2, fill: "var(--chart-1)" }, gDots);
+    }
+    // surface / tie-in and TD
+    el("circle", { cx: X(xs[0]), cy: Y(ys[0]), r: 4, fill: "var(--field)", stroke: "var(--chart-3)", "stroke-width": 1.5 }, svg);
+    var last = xs.length - 1;
+    el("rect", { x: X(xs[last]) - 4, y: Y(ys[last]) - 4, width: 8, height: 8, fill: "var(--chart-3)", stroke: "var(--field)", "stroke-width": 2 }, svg);
+    var tdx = X(xs[last]), tdLeft = tdx > m.l + pw - 30;
+    var tdl = el("text", { x: tdLeft ? tdx - 8 : tdx + 8, y: Y(ys[last]) + (cfg.yDown ? -8 : 14), "text-anchor": tdLeft ? "end" : "start" }, svg);
+    tdl.textContent = "TD";
+    // max DLS
+    var mi = cfg.markIndex;
+    if (mi > 0) {
+      el("circle", { cx: X(xs[mi]), cy: Y(ys[mi]), r: 6.5, fill: "none", stroke: "var(--field)", "stroke-width": 4 }, svg);
+      el("circle", { cx: X(xs[mi]), cy: Y(ys[mi]), r: 6.5, fill: "none", stroke: "var(--chart-2)", "stroke-width": 2.5 }, svg);
+    }
+    // hover layer: nearest station
+    var hl = el("circle", { r: 5, fill: "var(--chart-1)", stroke: "var(--field)", "stroke-width": 2, visibility: "hidden" }, svg);
+    var hit = el("rect", { x: m.l, y: m.t, width: pw, height: ph, fill: "transparent" }, svg);
+    var tip = document.createElement("div");
+    tip.className = "tip";
+    box.replaceChildren(svg, tip);
+    function hide() { tip.style.display = "none"; hl.setAttribute("visibility", "hidden"); }
+    hit.addEventListener("pointermove", function (ev) {
+      var r = svg.getBoundingClientRect();
+      var k = width / r.width;
+      var mx = (ev.clientX - r.left) * k, my = (ev.clientY - r.top) * k;
+      var best = -1, bd = Infinity;
+      for (var q = 0; q < xs.length; q++) {
+        var dx = X(xs[q]) - mx, dy = Y(ys[q]) - my, dd = dx * dx + dy * dy;
+        if (dd < bd) { bd = dd; best = q; }
+      }
+      if (best < 0 || bd > 40 * 40) { hide(); return; }
+      hl.setAttribute("cx", X(xs[best])); hl.setAttribute("cy", Y(ys[best])); hl.setAttribute("visibility", "visible");
+      tip.replaceChildren();
+      cfg.tipLines(best).forEach(function (ln) {
+        var row = document.createElement("div");
+        var b = document.createElement("b"); b.textContent = ln[1];
+        var s = document.createElement("span"); s.className = "m"; s.textContent = " " + ln[0];
+        row.appendChild(b); row.appendChild(s);
+        tip.appendChild(row);
+      });
+      tip.style.display = "block";
+      var bx = box.clientWidth, px2 = X(xs[best]) / k, py2 = Y(ys[best]) / k;
+      var tw = tip.offsetWidth, th = tip.offsetHeight;
+      var left = px2 + 12; if (left + tw > bx) left = px2 - 12 - tw; if (left < 0) left = 0;
+      var top = py2 - th - 10; if (top < 0) top = py2 + 12;
+      tip.style.left = left + "px"; tip.style.top = top + "px";
+    });
+    hit.addEventListener("pointerleave", hide);
+  }
+
+  function tipLines(p, i) {
+    var pt = p.points[i], u = p.units, out = [
+      ["MD", nf(pt.md, 1) + " " + u], ["TVD", nf(pt.tvd, 1) + " " + u],
+      ["N/S", nf(pt.north, 1)], ["E/W", nf(pt.east, 1)], ["VS", nf(pt.vs, 1)],
+      ["Inc/Azi", nf(pt.inc, 2) + "° / " + nf(pt.azi, 2) + "°"]
+    ];
+    if (!pt.isTieIn) out.push(["DLS", nf(pt.dls, 2) + "°" + rateLabel()]);
+    if (i === p.summary.max_dls_index && p.summary.max_dls > 0) out.push(["", "Max DLS station"]);
+    if (pt.isTieIn) out.push(["", "Tie-in"]);
+    return out;
+  }
+
+  function renderPlan(p) {
+    drawChart($("planBox"), {
+      xs: p.points.map(function (q) { return q.east; }),
+      ys: p.points.map(function (q) { return q.north; }),
+      yDown: false, markIndex: p.summary.max_dls > 0 ? p.summary.max_dls_index : -1,
+      xLabel: "E (+) / W (-), " + p.units, yLabel: "N (+) / S (-), " + p.units,
+      label: "Plan view of the well path, east on the horizontal axis and north on the vertical axis, equal scale.",
+      tipLines: function (i) { return tipLines(p, i); }
+    });
+  }
+  function renderSection(p) {
+    $("secLegend").textContent = "VS at " + nf(p.summary.vs_azimuth, 2) + "° vs TVD, equal scale";
+    drawChart($("secBox"), {
+      xs: p.points.map(function (q) { return q.vs; }),
+      ys: p.points.map(function (q) { return q.tvd; }),
+      yDown: true, markIndex: p.summary.max_dls > 0 ? p.summary.max_dls_index : -1,
+      xLabel: "Vertical section, " + p.units, yLabel: "TVD, " + p.units,
+      label: "Section view of the well path, vertical section on the horizontal axis and TVD increasing downward, equal scale.",
+      tipLines: function (i) { return tipLines(p, i); }
+    });
+  }
+
+  function runInterp() {
+    var out = $("interpOut");
+    var p = state.path;
+    if (!p) return;
+    var raw = $("interpMd").value.trim();
+    if (raw === "") { out.textContent = ""; return; }
+    try {
+      var q = C.interpolate(p, Number(raw));
+      var u = p.units;
+      out.style.color = "";
+      out.textContent = "MD " + nf(q.md, 2) + " " + u + "  Inc " + nf(q.inc, 3) + "°  Azi " + nf(q.azi, 3) +
+        "°  TVD " + nf(q.tvd, 2) + "  N/S " + nf(q.north, 2) + "  E/W " + nf(q.east, 2) + "  VS " + nf(q.vs, 2) +
+        "  (course DLS " + nf(q.dls, 2) + "°" + rateLabel() + ")";
+    } catch (e) {
+      if (!e.isSurveyError) throw e;
+      out.style.color = "var(--bad)";
+      out.textContent = e.message;
+    }
+  }
+
+  // ---- events ----
+  var timer = null;
+  function schedule() { clearTimeout(timer); timer = setTimeout(run, 250); }
+  $("surveys").addEventListener("input", function () { state.unitsByUser = false; schedule(); });
+  ["vsAzi", "tieMd", "tieTvd", "tieN", "tieE"].forEach(function (id) { $(id).addEventListener("input", schedule); });
+  function pickUnits() { state.unitsByUser = true; run(); }
+  $("unitsFt").addEventListener("change", pickUnits);
+  $("unitsM").addEventListener("change", pickUnits);
+  $("calc").addEventListener("click", run);
+  $("resetExample").addEventListener("click", function () {
+    $("surveys").value = EXAMPLE;
+    $("unitsFt").checked = true;
+    state.unitsByUser = false;
+    ["vsAzi", "tieMd", "tieTvd", "tieN", "tieE"].forEach(function (id) { $(id).value = ""; });
+    run();
+  });
+  $("interpBtn").addEventListener("click", function () { runInterp(); });
+  $("interpMd").addEventListener("keydown", function (e) { if (e.key === "Enter") runInterp(); });
+
+  $("file").addEventListener("change", function () {
+    var f = this.files && this.files[0];
+    if (!f) return;
+    if (f.size > C.MAX_BYTES) { setStatus("File " + f.name + " is larger than 5 MB. Trim it or split it.", "bad"); this.value = ""; return; }
+    var reader = new FileReader();
+    reader.addEventListener("load", function () {
+      $("surveys").value = String(reader.result);
+      state.unitsByUser = false;
+      run();
+    });
+    reader.addEventListener("error", function () { setStatus("The file could not be read.", "bad"); });
+    reader.readAsText(f);
+    this.value = "";
+  });
+
+  $("copyCsv").addEventListener("click", function () {
+    if (!state.path) return;
+    var text = csvText(state.path);
+    var btn = $("copyCsv");
+    function fallback() {
+      var ta = $("csvFallback");
+      ta.value = text; ta.hidden = false; $("csvFallbackLabel").hidden = false;
+      ta.focus(); ta.select();
+    }
+    try {
+      if (!navigator.clipboard || !navigator.clipboard.writeText) { fallback(); return; }
+      navigator.clipboard.writeText(text).then(function () {
+        btn.textContent = "Copied";
+        setTimeout(function () { btn.textContent = "Copy results as CSV"; }, 1500);
+      }).catch(fallback);
+    } catch (e) { fallback(); }
+  });
+
+  var rtimer = null;
+  if (typeof ResizeObserver === "function") {
+    var lastW = 0;
+    new ResizeObserver(function (entries) {
+      var w = Math.round(entries[0].contentRect.width);
+      if (w === lastW) return;
+      lastW = w;
+      clearTimeout(rtimer);
+      rtimer = setTimeout(function () { if (state.path) { renderPlan(state.path); renderSection(state.path); } }, 100);
+    }).observe($("planBox"));
+  }
+
+  run();
+})();
+</script>
